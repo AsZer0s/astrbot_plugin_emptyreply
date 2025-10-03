@@ -4,7 +4,7 @@ from astrbot.api import logger
 import astrbot.api.message_components as Comp
 
 
-@register("QQEmptyReplyBlocker", "AstrBotDev", "拦截 QQ 平台上仅包含回复引用但没有实际消息内容的消息", "1.0.0")
+@register("QQEmptyReplyBlocker", "AsZer0s", "拦截 QQ 平台上仅包含回复引用但没有实际消息内容的消息", "1.0.0")
 class QQEmptyReplyBlocker(Star):
     """
     QQ 空回复拦截器插件
