@@ -23,10 +23,10 @@ class QQEmptyReplyBlocker(Star):
         """插件初始化方法"""
         logger.info("QQEmptyReplyBlocker 插件启动完成")
 
-    @filter.on_decorating_result()
+    @filter.on_message()
     async def intercept_empty_reply(self, event: AstrMessageEvent):
         """
-        消息装饰钩子 - 拦截 QQ 平台上的空回复消息
+        消息拦截器 - 拦截 QQ 平台上的空回复消息
         
         判断逻辑：
         1. 检查消息来源平台是否为 QQ
@@ -44,7 +44,7 @@ class QQEmptyReplyBlocker(Star):
                 logger.debug(f"非 QQ 平台消息，放行: {platform_name}")
                 return
             
-            # 获取原始消息链
+            # 获取消息链
             message_chain = event.get_messages()
             if not message_chain:
                 logger.debug("消息链为空，放行")
@@ -73,11 +73,9 @@ class QQEmptyReplyBlocker(Star):
                 sender_name = event.get_sender_name()
                 logger.info(f"🚫 拦截空回复消息 - 发送者: {sender_name}, 平台: {platform_name}")
                 
-                # 清空消息链来拦截消息
-                result = event.get_result()
-                if result and hasattr(result, 'chain'):
-                    result.chain.clear()
-                    logger.info(f"✅ 成功拦截空回复消息")
+                # 阻止消息的进一步处理
+                event.is_wake = False
+                logger.info(f"✅ 成功拦截空回复消息")
                 
                 return
             
@@ -87,7 +85,6 @@ class QQEmptyReplyBlocker(Star):
         except Exception as e:
             logger.error(f"处理消息时发生错误: {e}")
             # 发生错误时放行，避免影响正常功能
-
 
     async def terminate(self):
         """插件销毁方法"""
